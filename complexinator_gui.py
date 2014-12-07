@@ -102,25 +102,31 @@ class Complexinator(Frame):
 
 
         if mode == 'c':
-            l33ttext = l33ttext.split(' ')
-            for (word, (cursor, syns)) in word_syns.iteritems():
-                l = len(syns)
-                word_inds = (l33ttext.index(w) for w in l33ttext if word in w)
-                for i in word_inds:
-                    if cursor == l-1:
-                        cursor = 0
-                    else:
-                        cursor += 1
-
-                    replacement_syn = syns[cursor]
-
-
-                    old_word = l33ttext[i]
-                    l33ttext[i] = old_word.replace(word, replacement_syn)
-
-            l33ttext = ' '.join(l33ttext)
+            l33ttext = self.replace_words_with_syns(l33ttext, word_syns)
 
         self.l33ttext.insert(END, l33ttext)
+
+
+    def replace_words_with_syns(self, l33ttext, word_syns):
+        l33ttext = l33ttext.split(' ')
+        for (word, (cursor, syns)) in word_syns.iteritems():
+            l = len(syns)
+            word_inds = (l33ttext.index(w) for w in l33ttext if word in w)
+            for i in word_inds:
+                if cursor == l-1:
+                    cursor = 0
+                else:
+                    cursor += 1
+
+                replacement_syn = syns[cursor]
+
+
+                old_word = l33ttext[i]
+                l33ttext[i] = old_word.replace(word, replacement_syn)
+
+        l33ttext = ' '.join(l33ttext)
+
+        return l33ttext
 
 
     def initWidgets(self):
