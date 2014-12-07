@@ -28,5 +28,9 @@ if __name__ == '__main__':
 
 
 
-# Sample sentences
-# This is a car with seeds and a dog inside of it
+'''
+Sample paragraphs:
+This is a car with seeds and a dog inside of it
+
+This tokenizer divides a text into a list of sentences, by using an unsupervised algorithm to build a model for abbreviation words, collocations, and words that start sentences. It must be trained on a large collection of plaintext in the target language before it can be used.
+'''
