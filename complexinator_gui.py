@@ -36,10 +36,13 @@ class Complexinator(Frame):
         self.l33ttext.delete(1.0, END)
 
         n00btext = self.n00btext.get(1.0,'end-1c')
+        l33ttext = n00btext
         complexity = self.complexity_slider.get()
         use_nouns = self.nouns.get()
         use_verbs = self.verbs.get()
         use_adjectives = self.adjectives.get()
+
+        word_syns = {}
 
         sentence_finder = nltk.data.load('tokenizers/punkt/english.pickle')
         sentences = sentence_finder.tokenize(n00btext.strip())
@@ -79,13 +82,45 @@ class Complexinator(Frame):
                                 guess_syns = ss.lemma_names()
                                 break
 
+
                     if mode == 's':
-                        self.l33ttext.insert(END, word + '\nWSD Synonyms: ' + ', '.join(wsd_syns) + '\nGuessed Synonyms: ' + ', '.join(guess_syns) + '\n\n')
+                        l33ttext += word + '\nWSD Synonyms: ' + ', '.join(wsd_syns) + '\nGuessed Synonyms: ' + ', '.join(guess_syns) + '\n\n'
 
-                    elif mode == 'c':
-                        l33ttext = ''
+                    if mode == 'c':
+                        # It's hack-y to use a random number as the cursor, but w/e, a web app will replace this soon
+                        new_syns = wsd_syns + guess_syns
+                        new_syns = filter(lambda w: w != word and w != 'None', new_syns)
+                        if len(new_syns) > 0:
+                            for i in  range(len(new_syns)):
+                                syn = new_syns[i]
+                                syn = syn.replace('_', ' ')
+                                if word[len(word)-1] == 's':
+                                    syn += 's'
+                                new_syns[i] = syn
 
-                        self.l33ttext.insert(END, l33ttext)
+                            word_syns[word] = (0, new_syns)
+
+
+        if mode == 'c':
+            l33ttext = l33ttext.split(' ')
+            for (word, (cursor, syns)) in word_syns.iteritems():
+                l = len(syns)
+                word_inds = (l33ttext.index(w) for w in l33ttext if word in w)
+                for i in word_inds:
+                    if cursor == l-1:
+                        cursor = 0
+                    else:
+                        cursor += 1
+
+                    replacement_syn = syns[cursor]
+
+
+                    old_word = l33ttext[i]
+                    l33ttext[i] = old_word.replace(word, replacement_syn)
+
+            l33ttext = ' '.join(l33ttext)
+
+        self.l33ttext.insert(END, l33ttext)
 
 
     def initWidgets(self):
