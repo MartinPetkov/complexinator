@@ -32,7 +32,7 @@ class Complexinator(Frame):
         self.parent.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
-    def complexify(self):
+    def complexify(self, mode='c'):
         self.l33ttext.delete(1.0, END)
 
         n00btext = self.n00btext.get(1.0,'end-1c')
@@ -79,11 +79,13 @@ class Complexinator(Frame):
                                 guess_syns = ss.lemma_names()
                                 break
 
-                    self.l33ttext.insert(END, word + '\nWSD Synonyms: ' + ', '.join(wsd_syns) + '\nGuessed Synonyms: ' + ', '.join(guess_syns) + '\n\n')
+                    if mode == 's':
+                        self.l33ttext.insert(END, word + '\nWSD Synonyms: ' + ', '.join(wsd_syns) + '\nGuessed Synonyms: ' + ', '.join(guess_syns) + '\n\n')
 
-        l33ttext = ''
+                    elif mode == 'c':
+                        l33ttext = ''
 
-        self.l33ttext.insert(END, l33ttext)
+                        self.l33ttext.insert(END, l33ttext)
 
 
     def initWidgets(self):
@@ -101,14 +103,22 @@ class Complexinator(Frame):
         # The button and parameters
         self.options_frame = Frame(self.parent)
         self.options_frame.pack(fill=BOTH, expand=1, side=TOP)
+
         self.complexify_button = Button(self.options_frame, text='COMPLEXIFY', command=self.complexify)
-        self.complexify_button.pack(side=TOP)
+        self.complexify_button.pack(side=TOP, fill=X)
+
+        self.stats_button = Button(self.options_frame, text='STATS', command=lambda: self.complexify('s'))
+        self.stats_button.pack(side=TOP, fill=X)
+
 
         self.complexity_slider = Scale(self.options_frame, orient=HORIZONTAL, from_=0, to=100)
+        self.complexity_slider.set(100)
         self.complexity_slider.pack()
+
 
         self.nouns = IntVar()
         nouns_check = Checkbutton(self.options_frame, text='Nouns?', variable=self.nouns)
+        nouns_check.select()
         nouns_check.pack(anchor=W)
 
         self.verbs = IntVar()
